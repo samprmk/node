@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Node.js MySQL CRUD App</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 50px; }
+form { margin-bottom: 20px; }
+input, button { padding: 10px; margin: 5px; }
+table { width: 50%; border-collapse: collapse; margin-top: 20px; }
+table, th, td { border: 1px solid black; padding: 10px; text-align: left; }
+</style>
+</head>
+<body>
+<h1>User Management</h1>
+<h2>Add User</h2>
+<form id="addUserForm">
+<input type="text" id="name" placeholder="Name" required>
+<input type="email" id="email" placeholder="Email" required>
+<button type="submit">Add User</button>
+</form>
+<h2>Update User</h2>
+<form id="updateUserForm">
+<input type="number" id="updateId" placeholder="User ID" required>
+<input type="text" id="updateName" placeholder="New Name">
+<input type="email" id="updateEmail" placeholder="New Email">
+<button type="submit">Update User</button>
+</form>
+<h2>Delete User</h2>
+<form id="deleteUserForm">
+<input type="number" id="deleteId" placeholder="User ID" required>
+<button type="submit">Delete User</button>
+</form>
+<h2>All Users</h2>
+<button id="getUsersBtn">Get All Users</button>
+<table id="usersTable">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<script>
+const API_URL = 'http://localhost:3000';
+// Add user
+document.getElementById('addUserForm').addEventListener('submit', function(e) {
+e.preventDefault();
+var name = document.getElementById('name').value;
+var email = document.getElementById('email').value;
+fetch(API_URL + '/users', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ name: name, email: email })
+}).then(function() { 
+alert('User added successfully!'); 
+});
+});
+// Update user
+document.getElementById('updateUserForm').addEventListener('submit', function(e) {
+e.preventDefault();
+var id = document.getElementById('updateId').value;
+var name = document.getElementById('updateName').value;
+var email = document.getElementById('updateEmail').value;
+fetch(API_URL + '/users/' + id, {
+method: 'PUT',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ name: name, email: email })
+}).then(function() { 
+alert('User updated successfully!'); 
+});
+});
+// Delete user
+document.getElementById('deleteUserForm').addEventListener('submit', function(e) {
+e.preventDefault();
+var id = document.getElementById('deleteId').value;
+fetch(API_URL + '/users/' + id, {
+method: 'DELETE'
+}).then(function() { 
+alert('User deleted successfully!'); 
+});
+});
+// Get all users
+document.getElementById('getUsersBtn').addEventListener('click', function() {
+fetch(API_URL + '/users')
+.then(function(response) {
+return response.json();
+})
+.then(function(users) {
+var tbody = document.querySelector('#usersTable tbody');
+tbody.innerHTML = '';
+users.forEach(function(user) {
+var row = '<tr><td>' + user.id + '</td><td>' + user.name + '</td><td>' + 
+user.email + '</td></tr>';
+tbody.innerHTML += row;
+});
+});
+});
+</script>
+</body>
+</html>
